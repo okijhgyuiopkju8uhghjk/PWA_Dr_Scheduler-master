@@ -58,6 +58,52 @@ document.addEventListener('DOMContentLoaded', () => {
     onCallModal.style.display = 'none';
   }
 
+  // Helper functions for Touch and Drop Logic
+  let dragHelper = null;
+
+  function createDragHelper(text, color, textColor) {
+    const helper = document.createElement('div');
+    helper.textContent = text;
+    helper.style.position = 'fixed';
+    helper.style.backgroundColor = color;
+    helper.style.color = textColor;
+    helper.style.padding = '10px';
+    helper.style.borderRadius = '5px';
+    helper.style.pointerEvents = 'none';
+    helper.style.zIndex = '1000';
+    helper.style.opacity = '0.9';
+    helper.style.transform = 'translate(-50%, -50%)';
+    document.body.appendChild(helper);
+    return helper;
+  }
+
+  function moveDragHelper(x, y) {
+    if (dragHelper) {
+      dragHelper.style.left = x + 'px';
+      dragHelper.style.top = y + 'px';
+    }
+  }
+
+  function handleDropAction(shiftBox, doctorName) {
+    const shiftId = shiftBox.dataset.shift;
+    const shiftName = shiftBox.dataset.shiftName;
+
+    if (shiftId === 'oncall') {
+      showOnCallModal(doctorName, shiftBox);
+    } else if (shiftId === 'off') {
+      if (shiftBox.dataset.doctors) {
+        shiftBox.dataset.doctors += `, ${doctorName}`;
+      } else {
+        shiftBox.dataset.doctors = doctorName;
+      }
+      shiftBox.textContent = `Duty Off: ${shiftBox.dataset.doctors}`;
+    } else {
+      shiftBox.textContent = `${shiftName}: ${doctorName}`;
+      shiftBox.dataset.doctor = doctorName;
+    }
+    shiftBox.classList.remove('dragover');
+  }
+
   modalOptions.addEventListener('click', e => {
     if (e.target.tagName === 'BUTTON' && pendingOnCall) {
       const time = e.target.dataset.time;
@@ -82,6 +128,40 @@ document.addEventListener('DOMContentLoaded', () => {
     docButton.addEventListener('dragstart', e => {
       e.dataTransfer.setData('text/plain', doc.name);
     });
+
+    // Touch events for mobile
+    docButton.addEventListener('touchstart', e => {
+      if (docButton.draggable === false) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      dragHelper = createDragHelper(doc.name, doc.color, doc.textColor);
+      moveDragHelper(touch.clientX, touch.clientY);
+    }, { passive: false });
+
+    docButton.addEventListener('touchmove', e => {
+      if (!dragHelper) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      moveDragHelper(touch.clientX, touch.clientY);
+    }, { passive: false });
+
+    docButton.addEventListener('touchend', e => {
+      if (!dragHelper) return;
+      const touch = e.changedTouches[0];
+      
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      const shiftBox = target ? target.closest('.box') : null;
+
+      if (shiftBox) {
+        handleDropAction(shiftBox, doc.name);
+      }
+
+      if (dragHelper) {
+        dragHelper.remove();
+        dragHelper = null;
+      }
+    });
+
     doctorsContainer.appendChild(docButton);
   });
 
@@ -90,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const shiftBox = document.createElement('div');
     shiftBox.classList.add('box');
     shiftBox.dataset.shift = shift.id;
+    shiftBox.dataset.shiftName = shift.name;
     shiftBox.textContent = shift.name;
     shiftBox.addEventListener('dragover', e => {
       e.preventDefault();
@@ -102,24 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     shiftBox.addEventListener('drop', e => {
       e.preventDefault();
-      shiftBox.classList.remove('dragover');
       const name = e.dataTransfer.getData('text/plain');
-
-      if (shift.id === 'oncall') {
-        showOnCallModal(name, shiftBox);
-      } else if (shift.id === 'off') {
-        // Append doctor to the 'Duty Off' box
-        if (shiftBox.dataset.doctors) {
-          shiftBox.dataset.doctors += `, ${name}`;
-        } else {
-          shiftBox.dataset.doctors = name;
-        }
-        shiftBox.textContent = `Duty Off: ${shiftBox.dataset.doctors}`;
-      } else {
-        // Replace doctor for other boxes
-        shiftBox.textContent = `${shift.name}: ${name}`;
-        shiftBox.dataset.doctor = name;
-      }
+      handleDropAction(shiftBox, name);
     });
     boxesContainer.appendChild(shiftBox);
   });
