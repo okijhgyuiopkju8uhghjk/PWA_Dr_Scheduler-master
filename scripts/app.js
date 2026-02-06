@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'D': 'Dr Deepak',
     'N': 'Dr Nikhilesh',
     'S': 'Dr Srinivas',
-    'R': 'Dr Rajesh',
+    'R': 'Dr Col Rajesh',
     '-': ' - '
   };
 
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     docButton.addEventListener('touchend', e => {
       if (!dragHelper) return;
       const touch = e.changedTouches[0];
-      
+
       const target = document.elementFromPoint(touch.clientX, touch.clientY);
       const shiftBox = target ? target.closest('.box') : null;
 
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (value.length === 4) {
       const [morningChar, afternoonChar, nightChar, offChar] = value.split('');
-      
+
       const morningDoctor = doctorMapping[morningChar];
       const afternoonDoctor = doctorMapping[afternoonChar];
       const nightDoctor = doctorMapping[nightChar];
