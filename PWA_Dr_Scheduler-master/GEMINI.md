@@ -1,0 +1,3 @@
+-use plain vanilla javascript
+-keep the repository as cloase to PWA as possible
+-do not host the website on a server, i will host it on github later, i should be able to open the website form the index file
