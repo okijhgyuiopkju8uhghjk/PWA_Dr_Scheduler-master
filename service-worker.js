@@ -1,7 +1,7 @@
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open('v1').then((cache) => {
+    caches.open('v2').then((cache) => {
       return cache.addAll([
         './',
         './index.html',
@@ -18,7 +18,7 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((response) => {
       // Network-first strategy
       return fetch(event.request).then((fetchResponse) => {
-        return caches.open('v1').then((cache) => {
+        return caches.open('v2').then((cache) => {
           cache.put(event.request, fetchResponse.clone());
           return fetchResponse;
         });

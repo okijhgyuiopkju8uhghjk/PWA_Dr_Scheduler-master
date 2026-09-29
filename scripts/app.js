@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const output = document.getElementById('output');
   const onCallModal = document.getElementById('on-call-modal');
   const modalOptions = document.getElementById('modal-options');
+  const nightModal = document.getElementById('night-modal');
+  const nightModalOptions = document.getElementById('night-modal-options');
   const scheduleInput = document.getElementById('schedule-input');
 
   const doctorMapping = {
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   boxesContainer.classList.add('boxes');
 
   let pendingOnCall = null;
+  let pendingNight = null;
 
   function updateState() {
     const selectedDay = document.querySelector('input[name="day"]:checked').value;
@@ -58,6 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
     onCallModal.style.display = 'none';
   }
 
+  function showNightModal(doctorName, shiftBox) {
+    pendingNight = { doctorName, shiftBox };
+    nightModal.style.display = 'block';
+  }
+
+  function hideNightModal() {
+    pendingNight = null;
+    nightModal.style.display = 'none';
+  }
+
   // Helper functions for Touch and Drop Logic
   let dragHelper = null;
 
@@ -88,8 +101,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const shiftId = shiftBox.dataset.shift;
     const shiftName = shiftBox.dataset.shiftName;
 
-    if (shiftId === 'oncall') {
-      showOnCallModal(doctorName, shiftBox);
+    if (shiftId === 'night') {
+      if (doctorName && doctorName.trim() !== '-') {
+        showNightModal(doctorName, shiftBox);
+      } else {
+        shiftBox.textContent = `${shiftName}: ${doctorName}`;
+        shiftBox.dataset.doctor = doctorName;
+        shiftBox.dataset.time = '';
+      }
+    } else if (shiftId === 'oncall') {
+      if (doctorName && doctorName.trim() !== '-') {
+        showOnCallModal(doctorName, shiftBox);
+      } else {
+        shiftBox.textContent = `${shiftName}: ${doctorName}`;
+        shiftBox.dataset.doctor = doctorName;
+        shiftBox.dataset.time = '';
+      }
     } else if (shiftId === 'off') {
       if (shiftBox.dataset.doctors) {
         shiftBox.dataset.doctors += `, ${doctorName}`;
@@ -114,6 +141,28 @@ document.addEventListener('DOMContentLoaded', () => {
       shiftBox.dataset.time = time;
 
       hideOnCallModal();
+    }
+  });
+
+  nightModalOptions.addEventListener('click', e => {
+    if (e.target.tagName === 'BUTTON' && pendingNight) {
+      const time = e.target.dataset.time;
+      const { doctorName, shiftBox } = pendingNight;
+
+      shiftBox.textContent = `Night Duty: ${doctorName} (${time})`;
+      shiftBox.dataset.doctor = doctorName;
+      shiftBox.dataset.time = time;
+
+      hideNightModal();
+    }
+  });
+
+  window.addEventListener('click', e => {
+    if (e.target === onCallModal) {
+      hideOnCallModal();
+    }
+    if (e.target === nightModal) {
+      hideNightModal();
     }
   });
 
@@ -204,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     afternoonBox.dataset.doctor = '';
     nightBox.textContent = 'Night Duty';
     nightBox.dataset.doctor = '';
+    nightBox.dataset.time = '';
     onCallBox.textContent = 'Anesthesiologist On Call';
     onCallBox.dataset.doctor = '';
     onCallBox.dataset.time = '';
@@ -230,6 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (nightDoctor) {
         nightBox.textContent = `Night Duty: ${nightDoctor}`;
         nightBox.dataset.doctor = nightDoctor;
+        nightBox.dataset.time = '5 pm to 9 am';
       }
       if (offDoctor) {
         offBox.textContent = `Duty Off: ${offDoctor}`;
@@ -256,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (nightDoctor) {
         nightBox.textContent = `Night Duty: ${nightDoctor}`;
         nightBox.dataset.doctor = nightDoctor;
+        nightBox.dataset.time = '5 pm to 9 am';
       }
       if (onCallDoctor && onCallDoctor !== ' - ') {
         showOnCallModal(onCallDoctor, onCallBox);
@@ -288,7 +340,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const morning = document.querySelector('[data-shift="morning"]').dataset.doctor;
     const afternoon = document.querySelector('[data-shift="afternoon"]').dataset.doctor;
-    const night = document.querySelector('[data-shift="night"]').dataset.doctor;
+    const nightBox = document.querySelector('[data-shift="night"]');
+    const night = nightBox.dataset.doctor;
+    const nightTime = nightBox.dataset.time;
     const onCallBox = document.querySelector('[data-shift="oncall"]');
     const onCallDoctor = onCallBox.dataset.doctor;
     const onCallTime = onCallBox.dataset.time;
@@ -298,7 +352,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (morning) text += `*8 am to 4 pm:* ${morning}\n`;
     if (afternoon) text += `*12 noon to 8 pm:* ${afternoon}\n`;
-    if (night) text += `*5 pm to 9 am (night duty):* ${night}\n`;
+    if (night) {
+      const timeStr = nightTime ? nightTime : '5 pm to 9 am';
+      text += `*${timeStr} (night duty):* ${night}\n`;
+    }
     if (hrs24) text += `*24 hrs Duty(9 am to 9 am):* ${hrs24}\n`;
     if (onCallDoctor) text += `*Anesthetist On Call- ${onCallTime} :* ${onCallDoctor}\n`;
     if (off) text += `*Duty off:* ${off}\n`;
