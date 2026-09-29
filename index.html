@@ -1,78 +1,81 @@
-  <!doctype html>
-  <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1",user-scalable="no" />
-    <title>OT ICU Doctors schedule</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <link rel="stylesheet" href="styles/style.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2563eb">
-  </head>
-  <body>
-    <div class="container">
-      <h1>OT/ICU Doctors schedule</h1>
-      
-      <div class="toggle-container">
-        <label>
-          <input type="radio" name="day" value="not-selected" checked> Not Selected
-        </label>
-        <label>
-          <input type="radio" name="day" value="today icu/ot doctors"> Today
-        </label>
-        <label>
-          <input type="radio" name="day" value="tomorrow icu/ot doctors"> Tomorrow
-        </label>
-      </div>
+<!doctype html>
+<html lang="en">
 
-      <div class="schedule-input-container">
-        <label for="schedule-input">Enter Schedule:</label>
-        <input type="text" id="schedule-input" maxlength="5" placeholder="e.g., DURD or DURS-">
-      </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" ,user-scalable="no" />
+  <title>OT ICU Doctors schedule</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+</head>
 
-      <div class="doctors-container"></div>
+<body>
+  <div class="container">
+    <h1>ICU Doctors schedule</h1>
 
-      <div class="boxes-container"></div>
-
-      <div class="actions">
-        <button id="create">Create</button>
-        <button id="edit">Edit</button>
-        <button id="copy">Copy</button>
-      </div>
-
-      <pre id="output"></pre>
+    <div class="toggle-container">
+      <label>
+        <input type="radio" name="day" value="not-selected" checked> Not Selected
+      </label>
+      <label>
+        <input type="radio" name="day" value="today icu doctors"> Today
+      </label>
+      <label>
+        <input type="radio" name="day" value="tomorrow icu doctors"> Tomorrow
+      </label>
     </div>
 
-    <div id="on-call-modal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <h3>Select On-Call Time</h3>
-        <div id="modal-options" class="modal-options">
-          <button data-time="8 pm to 8 am">8 pm to 8 am</button>
-          <button data-time="9 am to 9 pm (24 hrs)">9 am to 9 pm (24 hrs)</button>
-          <button data-time="5 pm to 8 am">5 pm to 8 am</button>
-        </div>
-      </div>
+    <div class="schedule-input-container">
+      <label for="schedule-input">Enter Schedule:</label>
+      <input type="text" id="schedule-input" maxlength="5" placeholder="e.g., DANM or DANSM">
     </div>
 
-    <div id="night-modal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <h3>Select Night Duty Time</h3>
-        <div id="night-modal-options" class="modal-options">
-          <button data-time="5 pm to 9 am">5 pm to 9 am</button>
-          <button data-time="8 pm to 8 am">8 pm to 8 am</button>
-        </div>
-      </div>
+    <div class="doctors-container"></div>
+
+    <div class="boxes-container"></div>
+
+    <div class="actions">
+      <button id="create">Create</button>
+      <button id="edit">Edit</button>
+      <button id="copy">Copy</button>
     </div>
 
-    <script src="scripts/data.js"></script>
-    <script src="scripts/app.js"></script>
-    <script>
+    <pre id="output"></pre>
+  </div>
+
+  <div id="on-call-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>Select On-Call Time</h3>
+      <div id="modal-options" class="modal-options">
+        <button data-time="8 pm to 8 am">8 pm to 8 am</button>
+        <button data-time="9 am to 9 pm (24 hrs)">9 am to 9 pm (24 hrs)</button>
+        <button data-time="5 pm to 8 am">5 pm to 8 am</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="night-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>Select Night Duty Time</h3>
+      <div id="night-modal-options" class="modal-options">
+        <button data-time="5 pm to 9 am">5 pm to 9 am</button>
+        <button data-time="8 pm to 8 am">8 pm to 8 am</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/data.js"></script>
+  <script src="scripts/app.js"></script>
+  <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('Service Worker Registered'));
     }
-    </script>
-  </body>
-  </html>
+  </script>
+</body>
+
+</html>

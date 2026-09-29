@@ -12,9 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const doctorMapping = {
     'D': 'Dr Deepak',
+    'A': 'Dr A Srinivas',
     'N': 'Dr Nikhilesh',
-    'S': 'Dr Srinivas',
-    'R': 'Dr Col Rajesh',
+    'S': 'Dr srinivas',
+    'R': 'Dr Arun',
+    'U': 'Dr Arun',
+    'M': 'Dr Manasa',
     '-': ' - '
   };
 
@@ -34,11 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       container.style.backgroundColor = '#F2A799';
       doctors.forEach(doctor => doctor.draggable = false);
-    } else if (selectedDay === 'today icu/ot doctors') {
+    } else if (selectedDay === 'today icu doctors') {
 
       container.style.backgroundColor = '#C2C2C2';
       doctors.forEach(doctor => doctor.draggable = true);
-    } else if (selectedDay === 'tomorrow icu/ot doctors') {
+    } else if (selectedDay === 'tomorrow icu doctors') {
 
       container.style.backgroundColor = 'skyblue';
       doctors.forEach(doctor => doctor.draggable = true);
@@ -309,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nightBox.dataset.doctor = nightDoctor;
         nightBox.dataset.time = '5 pm to 9 am';
       }
-      if (onCallDoctor && onCallDoctor !== ' - ') {
+      if (onCallDoctor && onCallDoctor.trim() !== '-') {
         showOnCallModal(onCallDoctor, onCallBox);
       }
       if (offDoctor) {
@@ -350,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hrs24 = document.querySelector('[data-shift="24hrs"]').dataset.doctor;
     const leave = document.querySelector('[data-shift="leave"]').dataset.doctor;
 
-    if (morning) text += `*8 am to 4 pm:* ${morning}\n`;
+    if (morning) text += `*9 am to 5 pm:* ${morning}\n`;
     if (afternoon) text += `*12 noon to 8 pm:* ${afternoon}\n`;
     if (night) {
       const timeStr = nightTime ? nightTime : '5 pm to 9 am';
